@@ -29,6 +29,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/lastname"
             android:text="Lastname"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/birthday"
+            android:text="birthday"/>
     </LinearLayout>
 
 

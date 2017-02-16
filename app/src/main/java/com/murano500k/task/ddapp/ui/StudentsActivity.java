@@ -16,158 +16,65 @@
 
 package com.murano500k.task.ddapp.ui;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.VisibleForTesting;
-import android.support.design.widget.NavigationView;
-import android.support.test.espresso.IdlingResource;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.murano500k.task.ddapp.Injection;
 import com.murano500k.task.ddapp.R;
 import com.murano500k.task.ddapp.data.json.Course;
 import com.murano500k.task.ddapp.data.json.Student;
-import com.murano500k.task.ddapp.util.EspressoIdlingResource;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
-public class StudentsActivity extends AppCompatActivity implements StudentsContract.View {
+public class StudentsActivity extends AppCompatActivity
+        implements StudentsContract.View , MyListAdapter.ListClickListener{
 
     private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
     private static final String TAG = "ActivityTEST";
 
-    private DrawerLayout mDrawerLayout;
-
-    private StudentsPresenter mStudentsPresenter;
+    private StudentsContract.Presenter presenter;
+    private Toolbar toolbar;
+    private RecyclerView recyclerView;
+    private MyListAdapter adapter;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_students);
-
-        // Set up the toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-        try {
-            Log.d(TAG, "onCreate: "+ getStudents(this));
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
-
-        /*StudentsFragment tasksFragment =
-                (StudentsFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
-        if (tasksFragment == null) {
-            // Create the fragment
-            tasksFragment = StudentsFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.contentFrame);
-        }
-
-        // Create the presenter
-        mStudentsPresenter = new StudentsPresenter(
-                Injection.provideTasksRepository(getApplicationContext()),
-                tasksFragment,
-                Injection.provideSchedulerProvider());
-
-        // Load previously saved state, if available.
-        if (savedInstanceState != null) {
-            FilterType currentFiltering =
-                    (FilterType) savedInstanceState.getSerializable(CURRENT_FILTERING_KEY);
-            mStudentsPresenter.setFiltering(currentFiltering);
-        }*/
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                presenter.loadMore(page);
+            }
+        };
+        recyclerView.addOnScrollListener(scrollListener);
+        adapter = new MyListAdapter(this);
+        recyclerView.setAdapter(adapter);
+        new StudentsPresenter(Injection.provideTasksRepository(getApplicationContext()),this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        //outState.putSerializable(CURRENT_FILTERING_KEY, mStudentsPresenter.getFiltering());
-
         super.onSaveInstanceState(outState);
     }
 
-
-    public String getStudents(Context r) throws XmlPullParserException, IOException {
-    /*String xml = r.getString(R.xml.data);
-    */XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        //XmlResourceParser xrp = context.getResources().getXml(R.xml.encounters);
-        XmlPullParser xpp = r.getResources().getXml(R.xml.data);
-
-
-        int eventType = xpp.getEventType();
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if(eventType == XmlPullParser.START_DOCUMENT) {
-                System.out.println("Start document");
-            } else if(eventType == XmlPullParser.START_TAG) {
-                System.out.println("Start tag "+xpp.getName());
-            } else if(eventType == XmlPullParser.END_TAG) {
-                System.out.println("End tag "+xpp.getName());
-            } else if(eventType == XmlPullParser.TEXT) {
-                System.out.println("Text "+xpp.getText());
-            }
-            eventType = xpp.next();
-
-        }
-        System.out.println("End document");
-        return xpp.toString();
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // Open the navigation drawer when the home icon is selected from the toolbar.
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                menuItem -> {
-                    switch (menuItem.getItemId()) {
-                        case R.id.list_navigation_menu_item:
-                            // Do nothing, we're already on that screen
-                            break;
-                        case R.id.statistics_navigation_menu_item:
-                          /*  Intent intent =
-                                    new Intent(StudentsActivity.this, StatisticsActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);*/
-                            break;
-                        default:
-                            break;
-                    }
-                    // Close the navigation drawer when an item is selected.
-                    menuItem.setChecked(true);
-                    mDrawerLayout.closeDrawers();
-                    return true;
-                });
-    }
-
-    @VisibleForTesting
-    public IdlingResource getCountingIdlingResource() {
-        return EspressoIdlingResource.getIdlingResource();
-    }
 
     @Override
     public void showError(String msg) {
@@ -180,21 +87,81 @@ public class StudentsActivity extends AppCompatActivity implements StudentsContr
     }
 
     @Override
-    public void showStudents(List<Student> students) {
+    public void addItems(List<Student> students, boolean update) {
+        if(update) {
+            adapter.addItems(students);
+        }else {
+            adapter.newItems(students);
+            scrollListener.resetState();
 
+        }
     }
 
     @Override
-    public void showFilterButton(List<Course> courses) {
+    public void showFilterButton(List<Course> courses, Course selected) {
+        Button button = new Button(this);
+        button.setBackgroundResource(android.R.drawable.ic_menu_more);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog(courses, selected);
+            }
+        });
+        ActionBar.LayoutParams layoutParams=new ActionBar.LayoutParams(Gravity.END);
+        toolbar.addView(button);
+    }
 
+    private void showFilterDialog(List<Course> courses, Course selected) {
+        String[] courseNames=new String [courses.size()];
+        int i=0;
+        int checked=-1;
+        for(Course c: courses){
+            courseNames[i]=c.getName();
+            if(Objects.equals(c,selected))checked=i;
+            i++;
+        }
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setSingleChoiceItems(courseNames,checked,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                presenter.filterSelected(courses.get(which));
+            }
+        });
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("Select filter");
+        builder.show();
+    }
+    private void showInfoDialog(Student student){
+        CharSequence[] courseNames=new CharSequence[student.getCourses().size()+1];
+        int i=0;
+        for(Course c: student.getCourses()){
+            courseNames[i]=c.getName()+" "+c.getMark();
+            i++;
+        }
+        courseNames[i]="Avg "+student.getAvgMark();
+
+        new AlertDialog.Builder(this)
+            .setItems(courseNames,null)
+            .setCancelable(true)
+            .setTitle("Student "+student.getLastName())
+            .create()
+            .show();
     }
 
 
     @Override
     public void setPresenter(StudentsContract.Presenter presenter) {
-
+        this.presenter=presenter;
+        presenter.subscribe();
     }
 
-    // TODO: 2/15/17 showInfoDialog
-    // TODO: 2/15/17 showFilterDialog
+    @Override
+    public void ListClicked(Student s) {
+        showInfoDialog(s);
+    }
 }

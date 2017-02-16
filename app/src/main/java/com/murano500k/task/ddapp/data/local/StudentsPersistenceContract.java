@@ -33,16 +33,14 @@ public final class StudentsPersistenceContract {
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_LASTNAME = "lastname";
         public static final String COLUMN_NAME_BIRTHDAY = "birthday";
+        public static final String COLUMN_NAME_AVG_MARK = "average-mark";
 
     }
-    public static abstract class StudentCourseEntry implements BaseColumns {
+    public static abstract class CourseEntry implements BaseColumns {
         public static final String TABLE_NAME = "studentcourse";
         public static final String COLUMN_NAME_STUDENT_ID = "studentId";
         public static final String COLUMN_NAME_COURSE_NAME = "courseId";
         public static final String COLUMN_NAME_MARK = "mark";
     }
-    public static abstract class CourseEntry implements BaseColumns {
-        public static final String TABLE_NAME = "course";
-        public static final String COLUMN_NAME_COURSE_NAME = "courseName";
-    }
+
 }

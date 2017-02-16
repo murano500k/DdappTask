@@ -30,13 +30,12 @@ public interface StudentsContract {
 
     interface View extends BaseView<Presenter> {
         void showError(String msg);
-        void showStudents(List<Student> students);
-        void showFilterButton(List<Course> courses);
+        void addItems(List<Student> students, boolean update);
+        void showFilterButton(List<Course> courses, Course selected);
     }
 
     interface Presenter extends BasePresenter {
-        void setFiltering(Course course);
-        void requestStudents(int offset);
-
+        void filterSelected(Course course);
+        void loadMore(int offset);
     }
 }

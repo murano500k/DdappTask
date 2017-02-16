@@ -22,9 +22,8 @@ import com.murano500k.task.ddapp.data.StudentsDataSource;
 import com.murano500k.task.ddapp.data.json.Course;
 import com.murano500k.task.ddapp.data.json.Student;
 
-import org.reactivestreams.Subscription;
-
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -35,14 +34,9 @@ import static android.content.ContentValues.TAG;
 
 public class StudentsPresenter implements StudentsContract.Presenter{
 
-    StudentsDataSource dataSource;
-    StudentsContract.View mView;
-
-    private List<Student> students;
-
-    private Course mCurrentFiltering = null;
-    private Subscription subscriptionCourse;
-
+    private StudentsDataSource dataSource;
+    private StudentsContract.View mView;
+    private Course mFilter = null;
 
     public StudentsPresenter(StudentsDataSource dataSource, StudentsContract.View view) {
         this.dataSource = dataSource;
@@ -50,62 +44,21 @@ public class StudentsPresenter implements StudentsContract.Presenter{
         mView.setPresenter(this);
     }
 
-    @Override
-    public void setFiltering(Course course) {
 
-    }
 
-    @Override
-    public void requestStudents(int offset) {
 
-    }
-
-    @Override
-    public void subscribe() {
-        dataSource.getStudents(0)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .subscribe(new Observer<List<Student>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<Student> value) {
-                        Log.d(TAG, "onNext: "+value);
-                        students=value;
-                        mView.showStudents(value);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mView.showError(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: finished with Students");
-                        initCourses();
-                    }
-                });
-    }
-
-    private void initCourses() {
+    private void initFilterButton(Course selectedFilter) {
         dataSource.getAllCourses()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(new Observer<List<Course>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
-
                     @Override
-                    public void onNext(List<Course> value) {
-                        mView.showFilterButton(value);
+                    public void onNext(List<Course> list) {
+                        mView.showFilterButton(list, selectedFilter);
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         mView.showError(e.getMessage());
@@ -116,13 +69,62 @@ public class StudentsPresenter implements StudentsContract.Presenter{
                         Log.d(TAG, "onComplete: finished with courses");
                     }
                 });
+    }
 
+    @Override
+    public void subscribe() {
+        Log.d(TAG, "subscribe:");
+        processAction(mFilter, 0, false);
+    }
+
+    @Override
+    public void loadMore(int offset) {
+        Log.d(TAG, "loadMore: "+offset);
+        processAction(mFilter, offset, true);
     }
 
 
+    @Override
+    public void filterSelected(Course course) {
+        Log.d(TAG, "filterSelected:");
+        if(!Objects.equals(course,mFilter)){
+            Log.d(TAG, "new filter");
+            mFilter=course;
+            subscribe();
+        }
+
+    }
+    private void processAction(Course filter, int offset, boolean update){
+        dataSource.getStudents(filter, offset)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(new Observer<List<Student>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe load more");
+                    }
+                    @Override
+                    public void onNext(List<Student> value) {
+                        Log.d(TAG, "onNext: "+value);
+                        mView.addItems(value, update);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.showError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: finished with Students");
+                        if(!update) initFilterButton(filter);
+                    }
+                });
+    }
 
     @Override
     public void unsubscribe() {
+
 
     }
 }
@@ -138,7 +140,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
     private final BaseSchedulerProvider mSchedulerProvider;
 
     @NonNull
-    private FilterType mCurrentFiltering = FilterType.ALL_TASKS;
+    private FilterType mFilter = FilterType.ALL_TASKS;
 
     private boolean mFirstLoad = true;
 
@@ -205,7 +207,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
                     }
                 })
                 .filter(task -> {
-                    switch (mCurrentFiltering) {
+                    switch (mFilter) {
                         case ACTIVE_TASKS:
                             return task.isActive();
                         case COMPLETED_TASKS:
@@ -246,7 +248,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
     }
 
     private void showFilterLabel() {
-        switch (mCurrentFiltering) {
+        switch (mFilter) {
             case ACTIVE_TASKS:
                // mTasksView.showActiveFilterLabel();
                 break;
@@ -260,7 +262,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
     }
 
     private void processEmptyTasks() {
-        switch (mCurrentFiltering) {
+        switch (mFilter) {
             case ACTIVE_TASKS:
                 //mTasksView.showNoActiveTasks();
                 break;
@@ -281,12 +283,12 @@ public class StudentsPresenter implements StudentsContract.Presenter{
 
     @Override
     public void setFiltering(@NonNull FilterType requestType) {
-        mCurrentFiltering = requestType;
+        mFilter = requestType;
     }
 
     @Override
     public FilterType getFiltering() {
-        return mCurrentFiltering;
+        return mFilter;
     }
 
 }

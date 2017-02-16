@@ -1,11 +1,14 @@
 
 package com.murano500k.task.ddapp.data.json;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Student {
+    public Student() {
+    }
 
     @SerializedName("id")
     @Expose
@@ -22,6 +25,16 @@ public class Student {
     @SerializedName("courses")
     @Expose
     private List<Course> courses = null;
+
+    private float avgMark;
+
+    public float getAvgMark() {
+        return avgMark;
+    }
+
+    public void setAvgMark(float avgMark) {
+        this.avgMark = avgMark;
+    }
 
     public String getId() {
         return id;
@@ -61,6 +74,25 @@ public class Student {
 
     public void setCourses(List<Course> courses) {
         this.courses = courses;
+    }
+
+    public Student(String id, String firstName, String lastName, int birthday) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", birthday=" + birthday +
+                ", courses=" + courses +
+                '}';
     }
 
 }

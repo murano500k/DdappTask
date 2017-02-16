@@ -13,6 +13,22 @@ public class Course {
     @Expose
     private int mark;
 
+    public Course(String name, int mark) {
+        this.name = name;
+        this.mark = mark;
+    }
+
+    public Course() {
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "name='" + name + '\'' +
+                ", mark=" + mark +
+                '}';
+    }
+
     public String getName() {
         return name;
     }

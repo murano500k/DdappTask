@@ -38,17 +38,11 @@ public class StudentDbHelper extends SQLiteOpenHelper {
                     StudentsPersistenceContract.StudentEntry.COLUMN_NAME_LASTNAME + TEXT_TYPE + COMMA_SEP +
                     StudentsPersistenceContract.StudentEntry.COLUMN_NAME_BIRTHDAY + INTEGER_TYPE +
                     " )";
-    private static final String SQL_CREATE_COURSES =
-            "CREATE TABLE " + StudentsPersistenceContract.CourseEntry.TABLE_NAME + " (" +
-                    StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME + TEXT_TYPE +
-                    " )";
-
     private static final String SQL_CREATE_STUDENTCOURSES =
-            "CREATE TABLE " + StudentsPersistenceContract.StudentCourseEntry.TABLE_NAME + " (" +
-                    StudentsPersistenceContract.StudentCourseEntry._ID + TEXT_TYPE + " PRIMARY KEY," +
-                    StudentsPersistenceContract.StudentCourseEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE + COMMA_SEP +
-                    StudentsPersistenceContract.StudentCourseEntry.COLUMN_NAME_COURSE_NAME + TEXT_TYPE + COMMA_SEP +
-                    StudentsPersistenceContract.StudentCourseEntry.COLUMN_NAME_MARK + INTEGER_TYPE +
+            "CREATE TABLE " + StudentsPersistenceContract.CourseEntry.TABLE_NAME + " (" +
+                    StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME + TEXT_TYPE + " PRIMARY KEY," +
+                    StudentsPersistenceContract.CourseEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE + COMMA_SEP +
+                    StudentsPersistenceContract.CourseEntry.COLUMN_NAME_MARK + INTEGER_TYPE +
                     " )";
     public StudentDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,7 +50,6 @@ public class StudentDbHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_STUDENTS);
-        db.execSQL(SQL_CREATE_COURSES);
         db.execSQL(SQL_CREATE_STUDENTCOURSES);
     }
 

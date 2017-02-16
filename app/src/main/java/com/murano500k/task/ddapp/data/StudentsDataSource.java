@@ -31,7 +31,6 @@ import io.reactivex.Observable;
  */
 public interface StudentsDataSource {
 
-    Observable<List<Student>> getStudents(int offset);
+    Observable<List<Student>> getStudents(Course filter, int offset);
     Observable<List<Course>> getAllCourses();
-
 }
