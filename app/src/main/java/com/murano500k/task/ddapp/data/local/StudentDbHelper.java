@@ -35,19 +35,19 @@ public class StudentDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + StudentsPersistenceContract.StudentEntry.TABLE_NAME + " (" +
                     StudentsPersistenceContract.StudentEntry._ID + TEXT_TYPE + " PRIMARY KEY," +
                     StudentsPersistenceContract.StudentEntry.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
-                    StudentsPersistenceContract.StudentEntry.COLUMN_NAME_LASTNAME + TEXT_TYPE +
+                    StudentsPersistenceContract.StudentEntry.COLUMN_NAME_LASTNAME + TEXT_TYPE + COMMA_SEP +
+                    StudentsPersistenceContract.StudentEntry.COLUMN_NAME_BIRTHDAY + INTEGER_TYPE +
                     " )";
     private static final String SQL_CREATE_COURSES =
             "CREATE TABLE " + StudentsPersistenceContract.CourseEntry.TABLE_NAME + " (" +
-                    StudentsPersistenceContract.CourseEntry._ID + TEXT_TYPE + " PRIMARY KEY," +
                     StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME + TEXT_TYPE +
                     " )";
 
     private static final String SQL_CREATE_STUDENTCOURSES =
             "CREATE TABLE " + StudentsPersistenceContract.StudentCourseEntry.TABLE_NAME + " (" +
                     StudentsPersistenceContract.StudentCourseEntry._ID + TEXT_TYPE + " PRIMARY KEY," +
-                    StudentsPersistenceContract.StudentCourseEntry.COLUMN_NAME_COURSE_ID + TEXT_TYPE + COMMA_SEP +
                     StudentsPersistenceContract.StudentCourseEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE + COMMA_SEP +
+                    StudentsPersistenceContract.StudentCourseEntry.COLUMN_NAME_COURSE_NAME + TEXT_TYPE + COMMA_SEP +
                     StudentsPersistenceContract.StudentCourseEntry.COLUMN_NAME_MARK + INTEGER_TYPE +
                     " )";
     public StudentDbHelper(Context context) {
@@ -59,6 +59,7 @@ public class StudentDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_COURSES);
         db.execSQL(SQL_CREATE_STUDENTCOURSES);
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

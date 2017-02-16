@@ -1,6 +1,11 @@
 package com.murano500k.task.ddapp;
 
+import com.murano500k.task.ddapp.data.json.Student;
+import com.murano500k.task.ddapp.data.remote.RetroHelper;
+
 import junit.framework.TestCase;
+
+import java.util.List;
 
 /**
  * Created by artem on 2/15/17.
@@ -9,20 +14,16 @@ import junit.framework.TestCase;
 public class TestRepo extends TestCase{
 
 
-/*
 
-    public void testRetr(
-    ) throws Exception{
+    public void testRetro() throws Exception{
         RetroHelper retroHelper = new RetroHelper();
-        retroHelper.test1();
         List <Student> list = retroHelper.getStudents();
         assertNotNull(list);
         for (Student s :
                 list) {
-            Log.d(TAG, "student: "+s);
+            System.out.println("student: "+s);
         }
 
     }
-*/
 
 }

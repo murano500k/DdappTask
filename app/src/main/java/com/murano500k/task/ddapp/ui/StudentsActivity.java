@@ -31,7 +31,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.murano500k.task.ddapp.R;
-import com.murano500k.task.ddapp.data.Student;
+import com.murano500k.task.ddapp.data.json.Course;
+import com.murano500k.task.ddapp.data.json.Student;
 import com.murano500k.task.ddapp.util.EspressoIdlingResource;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -184,9 +185,10 @@ public class StudentsActivity extends AppCompatActivity implements StudentsContr
     }
 
     @Override
-    public void showFilterButton(List<Student.Course> courses) {
+    public void showFilterButton(List<Course> courses) {
 
     }
+
 
     @Override
     public void setPresenter(StudentsContract.Presenter presenter) {

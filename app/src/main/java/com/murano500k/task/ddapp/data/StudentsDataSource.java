@@ -17,6 +17,9 @@
 package com.murano500k.task.ddapp.data;
 
 
+import com.murano500k.task.ddapp.data.json.Course;
+import com.murano500k.task.ddapp.data.json.Student;
+
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -29,7 +32,6 @@ import io.reactivex.Observable;
 public interface StudentsDataSource {
 
     Observable<List<Student>> getStudents(int offset);
-    Observable<List<Student.Course>> getAllCourses();
+    Observable<List<Course>> getAllCourses();
 
-    String getString();
 }

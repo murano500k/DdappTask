@@ -18,8 +18,9 @@ package com.murano500k.task.ddapp.ui;
 
 import android.util.Log;
 
-import com.murano500k.task.ddapp.data.Student;
 import com.murano500k.task.ddapp.data.StudentsDataSource;
+import com.murano500k.task.ddapp.data.json.Course;
+import com.murano500k.task.ddapp.data.json.Student;
 
 import org.reactivestreams.Subscription;
 
@@ -39,7 +40,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
 
     private List<Student> students;
 
-    private Student.Course mCurrentFiltering = null;
+    private Course mCurrentFiltering = null;
     private Subscription subscriptionCourse;
 
 
@@ -50,7 +51,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
     }
 
     @Override
-    public void setFiltering(Student.Course course) {
+    public void setFiltering(Course course) {
 
     }
 
@@ -61,7 +62,6 @@ public class StudentsPresenter implements StudentsContract.Presenter{
 
     @Override
     public void subscribe() {
-        mView.showError(dataSource.getString());
         dataSource.getStudents(0)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
@@ -95,14 +95,14 @@ public class StudentsPresenter implements StudentsContract.Presenter{
         dataSource.getAllCourses()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
-                .subscribe(new Observer<List<Student.Course>>() {
+                .subscribe(new Observer<List<Course>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(List<Student.Course> value) {
+                    public void onNext(List<Course> value) {
                         mView.showFilterButton(value);
                     }
 

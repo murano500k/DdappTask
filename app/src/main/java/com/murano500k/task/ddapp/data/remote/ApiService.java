@@ -1,7 +1,10 @@
 package com.murano500k.task.ddapp.data.remote;
 
-import com.murano500k.task.ddapp.data.StudentArray;
+import com.murano500k.task.ddapp.data.json.Student;
 
+import java.util.List;
+
+import retrofit2.Call;
 import retrofit2.http.GET;
 
 /**
@@ -11,5 +14,5 @@ import retrofit2.http.GET;
 public interface ApiService {
 
     @GET("students")
-    retrofit2.Call<StudentArray> getStudentArray();
+    Call<List<Student>> getStudentArray();
 }

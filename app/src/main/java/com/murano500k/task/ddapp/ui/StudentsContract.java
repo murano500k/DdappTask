@@ -18,7 +18,8 @@ package com.murano500k.task.ddapp.ui;
 
 import com.murano500k.task.ddapp.BasePresenter;
 import com.murano500k.task.ddapp.BaseView;
-import com.murano500k.task.ddapp.data.Student;
+import com.murano500k.task.ddapp.data.json.Course;
+import com.murano500k.task.ddapp.data.json.Student;
 
 import java.util.List;
 
@@ -30,11 +31,11 @@ public interface StudentsContract {
     interface View extends BaseView<Presenter> {
         void showError(String msg);
         void showStudents(List<Student> students);
-        void showFilterButton(List<Student.Course> courses);
+        void showFilterButton(List<Course> courses);
     }
 
     interface Presenter extends BasePresenter {
-        void setFiltering(Student.Course course);
+        void setFiltering(Course course);
         void requestStudents(int offset);
 
     }
