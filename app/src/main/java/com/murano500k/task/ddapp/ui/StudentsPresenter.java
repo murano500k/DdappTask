@@ -14,35 +14,139 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.tasks;
+package com.murano500k.task.ddapp.ui;
 
-import com.murano500k.task.ddapp.data.TasksDataSource;
+import android.util.Log;
 
-/**
- * Listens to user actions from the UI ({@link TasksFragment}), retrieves the data and updates the
- * UI as required.
- */
-public class TasksPresenter {/*implements TasksContract.Presenter {
+import com.murano500k.task.ddapp.data.Student;
+import com.murano500k.task.ddapp.data.StudentsDataSource;
+
+import org.reactivestreams.Subscription;
+
+import java.util.List;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
+import static android.content.ContentValues.TAG;
+
+public class StudentsPresenter implements StudentsContract.Presenter{
+
+    StudentsDataSource dataSource;
+    StudentsContract.View mView;
+
+    private List<Student> students;
+
+    private Student.Course mCurrentFiltering = null;
+    private Subscription subscriptionCourse;
+
+
+    public StudentsPresenter(StudentsDataSource dataSource, StudentsContract.View view) {
+        this.dataSource = dataSource;
+        this.mView = view;
+        mView.setPresenter(this);
+    }
+
+    @Override
+    public void setFiltering(Student.Course course) {
+
+    }
+
+    @Override
+    public void requestStudents(int offset) {
+
+    }
+
+    @Override
+    public void subscribe() {
+        mView.showError(dataSource.getString());
+        dataSource.getStudents(0)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(new Observer<List<Student>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Student> value) {
+                        Log.d(TAG, "onNext: "+value);
+                        students=value;
+                        mView.showStudents(value);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.showError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: finished with Students");
+                        initCourses();
+                    }
+                });
+    }
+
+    private void initCourses() {
+        dataSource.getAllCourses()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(new Observer<List<Student.Course>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Student.Course> value) {
+                        mView.showFilterButton(value);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.showError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: finished with courses");
+                    }
+                });
+
+    }
+
+
+
+    @Override
+    public void unsubscribe() {
+
+    }
+}
+    /*implements StudentsContract.Presenter {
 
     @NonNull
-    private final TasksRepository mTasksRepository;
+    private final StudentsRepository mTasksRepository;
 
     @NonNull
-    private final TasksContract.View mTasksView;
+    private final StudentsContract.View mTasksView;
 
     @NonNull
     private final BaseSchedulerProvider mSchedulerProvider;
 
     @NonNull
-    private TasksFilterType mCurrentFiltering = TasksFilterType.ALL_TASKS;
+    private FilterType mCurrentFiltering = FilterType.ALL_TASKS;
 
     private boolean mFirstLoad = true;
 
     @NonNull
     private CompositeSubscription mSubscriptions;
 
-    public TasksPresenter(@NonNull TasksRepository tasksRepository,
-                          @NonNull TasksContract.View tasksView,
+    public StudentsPresenter(@NonNull StudentsRepository tasksRepository,
+                          @NonNull StudentsContract.View tasksView,
                           @NonNull BaseSchedulerProvider schedulerProvider) {
         mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -176,15 +280,14 @@ public class TasksPresenter {/*implements TasksContract.Presenter {
     }
 
     @Override
-    public void setFiltering(@NonNull TasksFilterType requestType) {
+    public void setFiltering(@NonNull FilterType requestType) {
         mCurrentFiltering = requestType;
     }
 
     @Override
-    public TasksFilterType getFiltering() {
+    public FilterType getFiltering() {
         return mCurrentFiltering;
     }
 
 }
 */
-}

@@ -71,7 +71,7 @@ public class StudentDbHelper extends SQLiteOpenHelper {
 }
 
 /*
-public class TasksLocalDataSource implements TasksDataSource {
+public class TasksLocalDataSource implements StudentsDataSource {
 
     @Nullable
     private static TasksLocalDataSource INSTANCE;
@@ -194,7 +194,7 @@ public class TasksLocalDataSource implements TasksDataSource {
 
     @Override
     public void refreshTasks() {
-        // Not required because the {@link TasksRepository} handles the logic of refreshing the
+        // Not required because the {@link StudentsRepository} handles the logic of refreshing the
         // tasks from all the available data sources.
     }
 

@@ -17,7 +17,6 @@
 package com.murano500k.task.ddapp.data;
 
 import android.content.Context;
-import android.database.Observable;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
@@ -32,10 +31,10 @@ import java.util.List;
  * obtained from the server, by using the remote data source only if the local database doesn't
  * exist or is empty.
  */
-public class TasksRepository implements TasksDataSource {
+public class StudentsRepository implements StudentsDataSource {
 
     @Nullable
-    private static TasksRepository INSTANCE = null;
+    private static StudentsRepository INSTANCE = null;
 
     @VisibleForTesting
     @Nullable
@@ -49,13 +48,13 @@ public class TasksRepository implements TasksDataSource {
 
 
     // Prevent direct instantiation.
-    private TasksRepository(Context c) {
+    private StudentsRepository(Context c) {
         dbHelper=new StudentDbHelper(c);
     }
 
-    public static TasksRepository getInstance(Context c) {
+    public static StudentsRepository getInstance(Context c) {
         if (INSTANCE == null) {
-            INSTANCE = new TasksRepository(c);
+            INSTANCE = new StudentsRepository(c);
         }
         return INSTANCE;
     }
@@ -67,7 +66,18 @@ public class TasksRepository implements TasksDataSource {
 
 
     @Override
-    public Observable<List<Student>> getStudents(int offset) {
+    public io.reactivex.Observable<List<Student>> getStudents(int offset) {
+        return null;
+    }
+
+    @Override
+    public io.reactivex.Observable<List<Student.Course>> getAllCourses() {
+
+        return null;
+    }
+
+    @Override
+    public String getString() {
         return null;
     }
 

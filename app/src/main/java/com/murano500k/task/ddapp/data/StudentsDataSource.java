@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.tasks;
+package com.murano500k.task.ddapp.data;
+
+
+import java.util.List;
+
+import io.reactivex.Observable;
+
 
 /**
- * Used with the filter spinner in the tasks list.
+ * Main entry point for accessing tasks data.
+ * <p>
  */
-public enum TasksFilterType {
-    /**
-     * Do not filter tasks.
-     */
-    ALL_TASKS,
+public interface StudentsDataSource {
 
-    /**
-     * Filters only the active (not completed yet) tasks.
-     */
-    ACTIVE_TASKS,
+    Observable<List<Student>> getStudents(int offset);
+    Observable<List<Student.Course>> getAllCourses();
 
-    /**
-     * Filters only the completed tasks.
-     */
-    COMPLETED_TASKS
+    String getString();
 }

@@ -19,7 +19,6 @@ package com.murano500k.task.ddapp.data;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -61,7 +60,7 @@ public final class Student {
     }
 
     @NonNull
-    @Attribute(name = "Id")
+    @Element(name = "Id")
     private final String mId;
 
     @Nullable

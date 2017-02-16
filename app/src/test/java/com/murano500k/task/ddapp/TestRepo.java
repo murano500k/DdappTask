@@ -1,15 +1,6 @@
 package com.murano500k.task.ddapp;
 
-import android.util.Log;
-
-import com.murano500k.task.ddapp.data.Student;
-import com.murano500k.task.ddapp.data.remote.RetroHelper;
-
 import junit.framework.TestCase;
-
-import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by artem on 2/15/17.
@@ -18,9 +9,12 @@ import static android.content.ContentValues.TAG;
 public class TestRepo extends TestCase{
 
 
+/*
 
-    public void testRetro() throws Exception{
+    public void testRetr(
+    ) throws Exception{
         RetroHelper retroHelper = new RetroHelper();
+        retroHelper.test1();
         List <Student> list = retroHelper.getStudents();
         assertNotNull(list);
         for (Student s :
@@ -29,5 +23,6 @@ public class TestRepo extends TestCase{
         }
 
     }
+*/
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.tasks;
+package com.murano500k.task.ddapp.ui;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;

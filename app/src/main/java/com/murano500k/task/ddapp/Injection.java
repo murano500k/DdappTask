@@ -19,8 +19,8 @@ package com.murano500k.task.ddapp;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.murano500k.task.ddapp.data.TasksDataSource;
-import com.murano500k.task.ddapp.data.TasksRepository;
+import com.murano500k.task.ddapp.data.StudentsDataSource;
+import com.murano500k.task.ddapp.data.StudentsRepository;
 import com.murano500k.task.ddapp.util.schedulers.BaseSchedulerProvider;
 import com.murano500k.task.ddapp.util.schedulers.SchedulerProvider;
 
@@ -28,13 +28,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Enables injection of production implementations for
- * {@link TasksDataSource} at compile time.
+ * {@link StudentsDataSource} at compile time.
  */
 public class Injection {
 
-    public static TasksRepository provideTasksRepository(@NonNull Context context) {
+    public static StudentsRepository provideTasksRepository(@NonNull Context context) {
         checkNotNull(context);
-        return TasksRepository.getInstance(context);
+        return StudentsRepository.getInstance(context);
     }
 
     public static BaseSchedulerProvider provideSchedulerProvider() {

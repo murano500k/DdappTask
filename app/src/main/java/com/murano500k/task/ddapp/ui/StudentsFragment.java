@@ -12,15 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
 
-package com.murano500k.task.ddapp.tasks;
+
+package com.murano500k.task.ddapp.ui;
 
 import android.support.v4.app.Fragment;
 
-public class TasksFragment extends Fragment{/* implements TasksContract.View {
+public class StudentsFragment extends Fragment {
 
-    private TasksContract.Presenter mPresenter;
+
+}*/
+/* implements StudentsContract.View {
+
+    private StudentsContract.Presenter mPresenter;
 
     private TasksAdapter mListAdapter;
 
@@ -63,7 +68,7 @@ public class TasksFragment extends Fragment{/* implements TasksContract.View {
     }
 
     @Override
-    public void setPresenter(@NonNull TasksContract.Presenter presenter) {
+    public void setPresenter(@NonNull StudentsContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
     }
 
@@ -139,13 +144,13 @@ public class TasksFragment extends Fragment{/* implements TasksContract.View {
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.active:
-                    mPresenter.setFiltering(TasksFilterType.ACTIVE_TASKS);
+                    mPresenter.setFiltering(FilterType.ACTIVE_TASKS);
                     break;
                 case R.id.completed:
-                    mPresenter.setFiltering(TasksFilterType.COMPLETED_TASKS);
+                    mPresenter.setFiltering(FilterType.COMPLETED_TASKS);
                     break;
                 default:
-                    mPresenter.setFiltering(TasksFilterType.ALL_TASKS);
+                    mPresenter.setFiltering(FilterType.ALL_TASKS);
                     break;
             }
             mPresenter.loadStudents(false);
@@ -155,9 +160,13 @@ public class TasksFragment extends Fragment{/* implements TasksContract.View {
         popup.show();
     }
 
-    *//**
+    *//*
+*/
+/**
      * Listener for clicks on tasks in the ListView.
      *//*
+*/
+/*
     TaskItemListener mItemListener = new TaskItemListener() {
         @Override
         public void onTaskClick(Task clickedTask) {
@@ -320,6 +329,8 @@ public class TasksFragment extends Fragment{/* implements TasksContract.View {
         void onCompleteTaskClick(Task completedTask);
 
         void onActivateTaskClick(Task activatedTask);
-    }*/
+    }*//*
+
 
 }
+*/

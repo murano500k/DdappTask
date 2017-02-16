@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.data;
-
-import android.database.Observable;
-
-import java.util.List;
-
+package com.murano500k.task.ddapp.ui;
 
 /**
- * Main entry point for accessing tasks data.
- * <p>
+ * Used with the filter spinner in the tasks list.
  */
-public interface TasksDataSource {
+public enum FilterType {
+    /**
+     * Do not filter tasks.
+     */
+    ALL_TASKS,
 
-    Observable<List<Student>> getStudents(int offset);
+    /**
+     * Filters only the active (not completed yet) tasks.
+     */
+    ACTIVE_TASKS,
 
+    /**
+     * Filters only the completed tasks.
+     */
+    COMPLETED_TASKS
 }

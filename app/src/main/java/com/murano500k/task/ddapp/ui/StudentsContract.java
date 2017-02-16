@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.tasks;
-
-import android.support.annotation.NonNull;
+package com.murano500k.task.ddapp.ui;
 
 import com.murano500k.task.ddapp.BasePresenter;
 import com.murano500k.task.ddapp.BaseView;
@@ -27,39 +25,17 @@ import java.util.List;
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface TasksContract {
+public interface StudentsContract {
 
     interface View extends BaseView<Presenter> {
-
-        void setLoadingIndicator(boolean active);
-
+        void showError(String msg);
         void showStudents(List<Student> students);
-
-        void showStudentDetailsUi(String studentId);
-
-        void showLoadingTasksError();
-
-        void showActiveFilterLabel( );
-
-        void showAllFilterLabel();
-
-        void showSuccessfullySavedMessage();
-
-        boolean isActive();
-
-        void showFilteringPopUpMenu();
+        void showFilterButton(List<Student.Course> courses);
     }
 
     interface Presenter extends BasePresenter {
+        void setFiltering(Student.Course course);
+        void requestStudents(int offset);
 
-        void result(int requestCode, int resultCode);
-
-        void loadStudents(boolean forceUpdate);
-
-        void openStudentDetails(@NonNull Student requestedTask);
-
-        void setFiltering(TasksFilterType requestType);
-
-        TasksFilterType getFiltering();
     }
 }
