@@ -37,6 +37,8 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 
+import static com.murano500k.task.ddapp.ui.StudentsActivity.LIMIT;
+
 /**
  * Concrete implementation to load tasks from the data sources into a cache.
  * <p/>
@@ -46,7 +48,6 @@ import io.reactivex.functions.Function;
  */
 public class StudentsRepository implements StudentsDataSource {
     private static final String TAG = "StudentsRepository";
-    private static final int LIMIT = 20;
     @Nullable
     private static StudentsRepository INSTANCE = null;
 
@@ -96,7 +97,15 @@ public class StudentsRepository implements StudentsDataSource {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME + " = ?"+
                 " AND "+StudentsPersistenceContract.CourseEntry.COLUMN_NAME_MARK + " = ?";
-        String[] selectionArgs = {courseName,String.valueOf(mark)};
+
+
+        Log.d(TAG, "getCoursesCoursor selection: "+selection);
+
+
+
+        String[] selectionArgs = {courseName, String.valueOf(mark)};
+        Log.d(TAG, "getCoursesCoursor selectionArgs: "+selection);
+
         return  db.query(
                 StudentsPersistenceContract.CourseEntry.TABLE_NAME,                     // The table to query
                 getCourseProjection(),                               // The columns to return
@@ -155,7 +164,7 @@ public class StudentsRepository implements StudentsDataSource {
     }
 
     private Student getStudent(Cursor studentCursor){
-        if(!studentCursor.moveToNext()) return null;
+        //if(!studentCursor.moveToNext()) return null;
         Student student =new Student(studentCursor.getString(0),
                 studentCursor.getString(1),
                 studentCursor.getString(2),
@@ -175,14 +184,14 @@ public class StudentsRepository implements StudentsDataSource {
                 StudentsPersistenceContract.StudentEntry.COLUMN_NAME_BIRTHDAY,
         };
     }
-    private float getAverageMark(List<Course> courses){
+    private double getAverageMark(List<Course> courses){
         int count = courses.size();
         if(count==0)return 0;
         int sum=0;
         for(Course course: courses){
             sum+=course.getMark();
         }
-            return sum/count;
+            return ((double)sum)/count;
     }
     private List<Course> getStudentCourses(Cursor studentCursor){
             List<Course> courses =new ArrayList<>();
@@ -194,10 +203,12 @@ public class StudentsRepository implements StudentsDataSource {
         }
         return courses;
     }
-    private List<Student> getStudentsFromDb(Course filter, int offset) {
+    private List<Student> getStudentsFromDb(Course filter, int page) {
         SQLiteDatabase db=mDbHelper.getReadableDatabase();
         List<Student> students = new ArrayList<>();
         Cursor coursesCursor =getCoursesCoursor(filter.getName(), filter.getMark());
+        int offset = page*LIMIT;
+        Log.d(TAG, "getStudentsFromDb filtered, offset ="+offset);
         coursesCursor.move(offset);
         int i=0;
         while (coursesCursor.moveToNext() && ++i<LIMIT){
@@ -211,13 +222,14 @@ public class StudentsRepository implements StudentsDataSource {
                     null,
                     null,
                     null);
-
+            Log.d(TAG, "studentCoursor: "+studentCoursor.getPosition());
+            studentCoursor.moveToNext();
             students.add(getStudent(studentCoursor));
         }
-        Log.d(TAG, "getStudentsFromDb: size="+students.size());
+
         return students;
     }
-    private List<Student> getStudentsFromDb(int offset){
+    private List<Student> getStudentsFromDb(int page){
         SQLiteDatabase db=mDbHelper.getReadableDatabase();
         List<Student> students = new ArrayList<>();
         int i=0;
@@ -229,6 +241,8 @@ public class StudentsRepository implements StudentsDataSource {
                 null,
                 null,
                 null);
+        int offset = page*LIMIT;
+        Log.d(TAG, "getStudentsFromDb filtered, offset ="+offset);
         studentCoursor.move(offset);
         while (++i<LIMIT && studentCoursor.moveToNext()){
             students.add(getStudent(studentCoursor));
@@ -238,30 +252,31 @@ public class StudentsRepository implements StudentsDataSource {
     }
 
     @Override
-    public Observable<List<Student>> getStudents(Course filter, int offset) {
+    public Observable<List<Student>> getStudents(Course filter, int page) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        if(filter !=null)
+        if(filter !=null) {
             return Observable.fromCallable(new Callable<List<Student>>() {
-            @Override
-            public List<Student> call() throws Exception {
-                return getStudentsFromDb(filter,offset);
-            }
-        });
-
-        else
-            return Observable.fromCallable(new Callable<List<Student>>() {
-            @Override
-            public List<Student> call() throws Exception {
-                if(mDbHelper.shouldLoadFromRemote()){
-                    List<Student> students=retroHeltper.getStudents();
-                    if(students==null || students.size()==0) {
-                        Log.e(TAG, "getStudentsAnySource: NULL STUDENTS from web");
-                        return null;
-                    } else saveStudents(students);
+                @Override
+                public List<Student> call() throws Exception {
+                    return getStudentsFromDb(filter, page);
                 }
-                return getStudentsFromDb(offset);
-            }
-        });
+            });
+        }
+        else {
+            return Observable.fromCallable(new Callable<List<Student>>() {
+                @Override
+                public List<Student> call() throws Exception {
+                    if (mDbHelper.shouldLoadFromRemote()) {
+                        List<Student> students = retroHeltper.getStudents();
+                        if (students == null || students.size() == 0) {
+                            Log.e(TAG, "getStudentsAnySource: NULL STUDENTS from web");
+                            return null;
+                        } else saveStudents(students);
+                    }
+                    return getStudentsFromDb(page);
+                }
+            });
+        }
     }
 
     private void saveStudents(List<Student> students){

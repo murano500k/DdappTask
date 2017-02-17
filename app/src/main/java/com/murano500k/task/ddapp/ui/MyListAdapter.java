@@ -1,6 +1,7 @@
 package com.murano500k.task.ddapp.ui;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import com.murano500k.task.ddapp.R;
 import com.murano500k.task.ddapp.data.json.Student;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -34,11 +36,11 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
 		this.listener=l;
 	}
 	public void addItems(List<Student>update){
-		int startUpdateIndex=students.size();
-		students.addAll(update);
-		notifyItemRangeInserted(startUpdateIndex,update.size());
+		this.students.addAll(update);
 	}
-
+	public void clearItems(){
+		this.students.clear();
+	}
 
 	@Override
 	public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -55,7 +57,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
 
 		holder.name.setText(student.getFirstName());
 		holder.lastName.setText(student.getLastName());
-		holder.birthday.setText(""+student.getBirthday());
+		holder.birthday.setText(getDate(student.getBirthday()));
 		holder.button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -69,9 +71,6 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
 		return students.size();
 	}
 
-	public void newItems(List<Student> students) {
-		this.students=students;
-	}
 
 	public class MyViewHolder extends RecyclerView.ViewHolder {
 		public TextView name;
@@ -94,8 +93,11 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
 
 
 
+
 	public interface ListClickListener{
 		void ListClicked(Student s);
 	}
-
+	private String getDate(long time) {
+		return DateFormat.format("dd-MMM-yyyy", new Date(time*1000)).toString();
+	}
 }

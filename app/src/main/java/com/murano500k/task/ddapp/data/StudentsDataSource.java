@@ -26,10 +26,6 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 
 
-/**
- * Main entry point for accessing tasks data.
- * <p>
- */
 public interface StudentsDataSource {
 
     Observable<List<Student>> getStudents(Course filter, int offset);

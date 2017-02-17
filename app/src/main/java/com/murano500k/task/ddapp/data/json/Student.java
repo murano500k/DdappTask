@@ -26,13 +26,13 @@ public class Student {
     @Expose
     private List<Course> courses = null;
 
-    private float avgMark;
+    private double avgMark;
 
-    public float getAvgMark() {
+    public double getAvgMark() {
         return avgMark;
     }
 
-    public void setAvgMark(float avgMark) {
+    public void setAvgMark(double avgMark) {
         this.avgMark = avgMark;
     }
 

@@ -35,7 +35,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
     private static final String TAG = "StudentsPresenter";
     private StudentsDataSource dataSource;
     private StudentsContract.View mView;
-    private Course mFilter = null;
+    private Course mFilter;
 
     public StudentsPresenter(StudentsDataSource dataSource, StudentsContract.View view) {
         this.dataSource = dataSource;
@@ -48,8 +48,8 @@ public class StudentsPresenter implements StudentsContract.Presenter{
 
     private void initFilterButton(Course selectedFilter) {
         dataSource.getAllCourses()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Course>>() {
                     @Override
                     public void accept(List<Course> courses) throws Exception {
@@ -61,6 +61,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
     @Override
     public void subscribe() {
         Log.d(TAG, "subscribe:");
+        mFilter=null;
         processAction(mFilter, 0, false);
     }
 
@@ -77,30 +78,28 @@ public class StudentsPresenter implements StudentsContract.Presenter{
         if(!Objects.equals(course,mFilter)){
             Log.d(TAG, "new filter");
             mFilter=course;
-            subscribe();
+            processAction(mFilter, 0, false);
         }
 
     }
 
-    // TODO: 2/17/17 fix endlessScroll
-    // TODO: 2/17/17 add edittext to filterdialog
     private void processAction(Course filter, int offset, boolean update){
         dataSource.getStudents(filter, offset)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Student>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe load more");
+                        Log.d(TAG, "onSubscribe");
                     }
                     @Override
                     public void onNext(List<Student> value) {
-                        Log.d(TAG, "onNext: "+value);
                         mView.addItems(value, update);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.e(TAG, "onError: ",e );
                         mView.showError(e.getMessage());
                     }
 
@@ -116,170 +115,7 @@ public class StudentsPresenter implements StudentsContract.Presenter{
     public void unsubscribe() {
 
 
+
     }
 }
-    /*implements StudentsContract.Presenter {
 
-    @NonNull
-    private final StudentsRepository mTasksRepository;
-
-    @NonNull
-    private final StudentsContract.View mTasksView;
-
-    @NonNull
-    private final BaseSchedulerProvider mSchedulerProvider;
-
-    @NonNull
-    private FilterType mFilter = FilterType.ALL_TASKS;
-
-    private boolean mFirstLoad = true;
-
-    @NonNull
-    private CompositeSubscription mSubscriptions;
-
-    public StudentsPresenter(@NonNull StudentsRepository tasksRepository,
-                          @NonNull StudentsContract.View tasksView,
-                          @NonNull BaseSchedulerProvider schedulerProvider) {
-        mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null");
-        mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
-        mSchedulerProvider = checkNotNull(schedulerProvider, "schedulerProvider cannot be null");
-
-        mSubscriptions = new CompositeSubscription();
-        mTasksView.setPresenter(this);
-    }
-
-    @Override
-    public void subscribe() {
-        loadStudents(false);
-    }
-
-    @Override
-    public void unsubscribe() {
-        mSubscriptions.clear();
-    }
-
-    @Override
-    public void result(int requestCode, int resultCode) {
-        // If a task was successfully added, show snackbar
-
-    }
-
-    @Override
-    public void loadStudents(boolean forceUpdate) {
-        // Simplification for sample: a network reload will be forced on first load.
-        loadTasks(forceUpdate || mFirstLoad, true);
-        mFirstLoad = false;
-    }
-
-    *//**
-     * @param forceUpdate   Pass in true to refresh the data in the {@link TasksDataSource}
-     * @param showLoadingUI Pass in true to display a loading icon in the UI
-     *//*
-    private void loadTasks(final boolean forceUpdate, final boolean showLoadingUI) {
-        if (showLoadingUI) {
-            mTasksView.setLoadingIndicator(true);
-        }
-        if (forceUpdate) {
-            mTasksRepository.refreshTasks();
-        }
-
-        // The network request might be handled in a different thread so make sure Espresso knows
-        // that the app is busy until the response is handled.
-        EspressoIdlingResource.increment(); // App is busy until further notice
-
-        mSubscriptions.clear();
-        Subscription subscription = mTasksRepository
-                .getTasks()
-                .flatMap(new Func1<List<Task>, Observable<Task>>() {
-                    @Override
-                    public Observable<Task> call(List<Task> tasks) {
-                        return Observable.from(tasks);
-                    }
-                })
-                .filter(task -> {
-                    switch (mFilter) {
-                        case ACTIVE_TASKS:
-                            return task.isActive();
-                        case COMPLETED_TASKS:
-                            return task.isCompleted();
-                        case ALL_TASKS:
-                        default:
-                            return true;
-                    }
-                })
-                .toList()
-                .subscribeOn(mSchedulerProvider.computation())
-                .observeOn(mSchedulerProvider.ui())
-                .doOnTerminate(() -> {
-                    if (!EspressoIdlingResource.getIdlingResource().isIdleNow()) {
-                        EspressoIdlingResource.decrement(); // Set app as idle.
-                    }
-                })
-                .subscribe(
-                        // onNext
-                        this::processTasks,
-                        // onError
-                        throwable -> mTasksView.showLoadingTasksError(),
-                        // onCompleted
-                        () -> mTasksView.setLoadingIndicator(false));
-        mSubscriptions.add(subscription);
-    }
-
-    private void processTasks(@NonNull List<Task> tasks) {
-        if (tasks.isEmpty()) {
-            // Show a message indicating there are no tasks for that filter type.
-            processEmptyTasks();
-        } else {
-            // Show the list of tasks
-            mTasksView.showStudents(tasks);
-            // Set the filter label's text.
-            showFilterLabel();
-        }
-    }
-
-    private void showFilterLabel() {
-        switch (mFilter) {
-            case ACTIVE_TASKS:
-               // mTasksView.showActiveFilterLabel();
-                break;
-            case COMPLETED_TASKS:
-                //mTasksView.showCompletedFilterLabel();
-                break;
-            default:
-               // mTasksView.showAllFilterLabel();
-                break;
-        }
-    }
-
-    private void processEmptyTasks() {
-        switch (mFilter) {
-            case ACTIVE_TASKS:
-                //mTasksView.showNoActiveTasks();
-                break;
-            case COMPLETED_TASKS:
-                //mTasksView.showNoCompletedTasks();
-                break;
-            default:
-                //mTasksView.showNoTasks();
-                break;
-        }
-    }
-
-    @Override
-    public void openStudentDetails(@NonNull Task requestedTask) {
-        checkNotNull(requestedTask, "requestedTask cannot be null!");
-        mTasksView.showStudentDetailsUi(requestedTask.getId());
-    }
-
-    @Override
-    public void setFiltering(@NonNull FilterType requestType) {
-        mFilter = requestType;
-    }
-
-    @Override
-    public FilterType getFiltering() {
-        return mFilter;
-    }
-
-}
-*/
