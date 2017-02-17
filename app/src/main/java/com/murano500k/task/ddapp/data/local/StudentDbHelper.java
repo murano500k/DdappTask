@@ -19,8 +19,10 @@ package com.murano500k.task.ddapp.data.local;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class StudentDbHelper extends SQLiteOpenHelper {
+    private static final String TAG = "StudentDbHelper";
     public static final int DATABASE_VERSION = 1;
 
     public static final String DATABASE_NAME = "Students.db";
@@ -40,17 +42,26 @@ public class StudentDbHelper extends SQLiteOpenHelper {
                     " )";
     private static final String SQL_CREATE_STUDENTCOURSES =
             "CREATE TABLE " + StudentsPersistenceContract.CourseEntry.TABLE_NAME + " (" +
-                    StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME + TEXT_TYPE + " PRIMARY KEY," +
+                    StudentsPersistenceContract.CourseEntry._ID + TEXT_TYPE + " PRIMARY KEY," +
+                    StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME + TEXT_TYPE + COMMA_SEP +
                     StudentsPersistenceContract.CourseEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE + COMMA_SEP +
                     StudentsPersistenceContract.CourseEntry.COLUMN_NAME_MARK + INTEGER_TYPE +
                     " )";
+
+    boolean mShouldLoadFromRemote = false;
+    public boolean shouldLoadFromRemote(){
+        Log.d(TAG, "shouldLoadFromRemote: "+mShouldLoadFromRemote);
+        return mShouldLoadFromRemote;
+    }
     public StudentDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "onCreate: ");
         db.execSQL(SQL_CREATE_STUDENTS);
         db.execSQL(SQL_CREATE_STUDENTCOURSES);
+        mShouldLoadFromRemote=true;
     }
 
 

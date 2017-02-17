@@ -55,11 +55,11 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.MyViewHold
 
 		holder.name.setText(student.getFirstName());
 		holder.lastName.setText(student.getLastName());
-		holder.birthday.setText(student.getBirthday());
+		holder.birthday.setText(""+student.getBirthday());
 		holder.button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				listener.ListClicked(student);
 			}
 		});
 	}

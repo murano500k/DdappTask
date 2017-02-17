@@ -24,10 +24,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.murano500k.task.ddapp.Injection;
 import com.murano500k.task.ddapp.R;
@@ -39,15 +39,13 @@ import java.util.Objects;
 
 public class StudentsActivity extends AppCompatActivity
         implements StudentsContract.View , MyListAdapter.ListClickListener{
-
-    private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
-    private static final String TAG = "ActivityTEST";
-
+    private static final String TAG = "StudentsActivity";
     private StudentsContract.Presenter presenter;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private MyListAdapter adapter;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +76,19 @@ public class StudentsActivity extends AppCompatActivity
 
     @Override
     public void showError(String msg) {
+        Log.e(TAG, "showError: "+msg );
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(StudentsActivity.this, msg, Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(StudentsActivity.this)
+                        .setMessage(msg)
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                presenter.subscribe();
+                            }
+                        })
+                        .create().show();
             }
         });
     }
@@ -99,7 +106,16 @@ public class StudentsActivity extends AppCompatActivity
 
     @Override
     public void showFilterButton(List<Course> courses, Course selected) {
-        Button button = new Button(this);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (button!=null) {
+                    Log.d(TAG, "button already added ");
+                    toolbar.removeView(button);
+                }
+            }
+        });
+        button = new Button(this);
         button.setBackgroundResource(android.R.drawable.ic_menu_more);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +124,14 @@ public class StudentsActivity extends AppCompatActivity
             }
         });
         ActionBar.LayoutParams layoutParams=new ActionBar.LayoutParams(Gravity.END);
-        toolbar.addView(button);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                toolbar.addView(button);
+            }
+        });
+
     }
 
     private void showFilterDialog(List<Course> courses, Course selected) {
@@ -125,6 +148,7 @@ public class StudentsActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 presenter.filterSelected(courses.get(which));
+                dialog.dismiss();
             }
         });
         builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {

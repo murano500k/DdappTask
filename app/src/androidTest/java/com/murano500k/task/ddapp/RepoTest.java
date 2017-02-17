@@ -9,6 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.murano500k.task.ddapp.data.StudentsRepository;
+import com.murano500k.task.ddapp.data.json.Course;
 import com.murano500k.task.ddapp.data.json.Student;
 import com.murano500k.task.ddapp.util.EspressoIdlingResource;
 
@@ -17,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -49,12 +49,7 @@ public class RepoTest {
         List<Student> students=null;
         StudentsRepository repository = new StudentsRepository(context);
         EspressoIdlingResource.increment();
-        io.reactivex.Observable.fromCallable(new Callable<List<Student>>() {
-            @Override
-            public List<Student> call() throws Exception {
-                return repository.getStudentsAnySource();
-            }
-        })
+        repository.getStudents(null,0)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<Student>>() {
@@ -100,16 +95,10 @@ public class RepoTest {
         assertNotNull(repository);
 
         EspressoIdlingResource.increment();
-
-        io.reactivex.Observable.fromCallable(new Callable<List<Student>>() {
-            @Override
-            public List<Student> call() throws Exception {
-                return repository.getStudentsAnySource();
-            }
-        })
+repository.getAllCourses()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Student>>() {
+                .subscribe(new Observer<List<Course>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.d(TAG, "onSubscribe2: "+System.currentTimeMillis());
@@ -117,18 +106,13 @@ public class RepoTest {
                     }
 
                     @Override
-                    public void onNext(List<Student> value) {
-                        List<Student> students=value;
-
-                        assertNotNull(students);
-                        assertTrue(students.size()>0);
-                        for (Student s :
-                                students) {
-                            // Log.d(TAG, "student: "+s);
+                    public void onNext(List<Course> value) {
+                        for (Course c:value
+                             ) {
+                            Log.d(TAG, "onNext: "+c);
+                            
                         }
-
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError: ", e);

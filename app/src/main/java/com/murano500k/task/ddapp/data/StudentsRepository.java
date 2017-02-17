@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
 
 /**
  * Concrete implementation to load tasks from the data sources into a cache.
@@ -43,13 +45,12 @@ import io.reactivex.Observable;
  * exist or is empty.
  */
 public class StudentsRepository implements StudentsDataSource {
-    private static final String TAG = "TasksRepository";
+    private static final String TAG = "StudentsRepository";
     private static final int LIMIT = 20;
     @Nullable
     private static StudentsRepository INSTANCE = null;
 
 
-    boolean mShouldLoadFromRemote = false;
 
     StudentDbHelper mDbHelper;
 
@@ -116,16 +117,21 @@ public class StudentsRepository implements StudentsDataSource {
     }
 
     @Override
-    public Observable<List<Course>> getAllCourses() {
+    public Single<List<Course>> getAllCourses() {
         return Observable.fromCallable(new Callable<List<Course>>() {
             @Override
             public List<Course> call() throws Exception {
                 List<Course> courses =new ArrayList<>();
                 Cursor cursor = getCoursesCoursor();
-                while (cursor.moveToNext()) courses.add(new Course(cursor.getString(0),cursor.getInt(2)));
+                while (cursor.moveToNext()) courses.add(new Course(cursor.getString(0),cursor.getInt(1)));
                 return courses;
             }
-        });
+        }).flatMapIterable(new Function<List<Course>, Iterable<Course>>() {
+            @Override
+            public Iterable<Course> apply(List<Course> courses) throws Exception {
+                return courses;
+            }
+        }).distinct(Course::getName).toList();
     }
 
 
@@ -149,6 +155,7 @@ public class StudentsRepository implements StudentsDataSource {
     }
 
     private Student getStudent(Cursor studentCursor){
+        if(!studentCursor.moveToNext()) return null;
         Student student =new Student(studentCursor.getString(0),
                 studentCursor.getString(1),
                 studentCursor.getString(2),
@@ -179,7 +186,7 @@ public class StudentsRepository implements StudentsDataSource {
     }
     private List<Course> getStudentCourses(Cursor studentCursor){
             List<Course> courses =new ArrayList<>();
-        if(studentCursor==null || !studentCursor.moveToNext()) return null;
+        //if(studentCursor==null || !studentCursor.moveToNext()) return null;
         String studentId = studentCursor.getString(0);
         Cursor courseCursor=getCoursesCoursor(studentId);
         while (courseCursor.moveToNext()){
@@ -204,6 +211,7 @@ public class StudentsRepository implements StudentsDataSource {
                     null,
                     null,
                     null);
+
             students.add(getStudent(studentCoursor));
         }
         Log.d(TAG, "getStudentsFromDb: size="+students.size());
@@ -213,16 +221,16 @@ public class StudentsRepository implements StudentsDataSource {
         SQLiteDatabase db=mDbHelper.getReadableDatabase();
         List<Student> students = new ArrayList<>();
         int i=0;
-        while (++i<LIMIT){
-            Cursor studentCoursor =db.query(
-                    StudentsPersistenceContract.StudentEntry.TABLE_NAME,
-                    getStudentProjection(),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
-            studentCoursor.move(offset);
+        Cursor studentCoursor =db.query(
+                StudentsPersistenceContract.StudentEntry.TABLE_NAME,
+                getStudentProjection(),
+                null,
+                null,
+                null,
+                null,
+                null);
+        studentCoursor.move(offset);
+        while (++i<LIMIT && studentCoursor.moveToNext()){
             students.add(getStudent(studentCoursor));
         }
         Log.d(TAG, "getStudentsFromDb: size="+students.size());
@@ -231,7 +239,8 @@ public class StudentsRepository implements StudentsDataSource {
 
     @Override
     public Observable<List<Student>> getStudents(Course filter, int offset) {
-        if(filter==null)
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        if(filter !=null)
             return Observable.fromCallable(new Callable<List<Student>>() {
             @Override
             public List<Student> call() throws Exception {
@@ -243,7 +252,7 @@ public class StudentsRepository implements StudentsDataSource {
             return Observable.fromCallable(new Callable<List<Student>>() {
             @Override
             public List<Student> call() throws Exception {
-                if(mShouldLoadFromRemote){
+                if(mDbHelper.shouldLoadFromRemote()){
                     List<Student> students=retroHeltper.getStudents();
                     if(students==null || students.size()==0) {
                         Log.e(TAG, "getStudentsAnySource: NULL STUDENTS from web");
@@ -261,30 +270,37 @@ public class StudentsRepository implements StudentsDataSource {
             Log.e(TAG, "saveStudents: "+null );
             return;
         }
+        Log.d(TAG, "saveStudents: "+students.size());
+        int i=0;
+        db.beginTransaction();
+        try {
 
-        for (Student s:students) {
-            ContentValues studentValues = new ContentValues();
-            studentValues.put(StudentsPersistenceContract.StudentEntry._ID, s.getId());
-            studentValues.put(StudentsPersistenceContract.StudentEntry.COLUMN_NAME_NAME, s.getFirstName());
-            studentValues.put(StudentsPersistenceContract.StudentEntry.COLUMN_NAME_LASTNAME, s.getLastName());
-            studentValues.put(StudentsPersistenceContract.StudentEntry.COLUMN_NAME_BIRTHDAY, s.getBirthday());
-            List<Integer> sMarks=new ArrayList<>();
-            for(Course sCourse : s.getCourses()) {
-                Log.d(TAG, "new studentCourse: "+sCourse);
-                ContentValues studentCourseValues = new ContentValues();
-                studentCourseValues.put(StudentsPersistenceContract.CourseEntry.COLUMN_NAME_STUDENT_ID, s.getId());
-                studentCourseValues.put(StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME, sCourse.getName());
-                studentCourseValues.put(StudentsPersistenceContract.CourseEntry.COLUMN_NAME_MARK, sCourse.getMark());
-                db.insert(StudentsPersistenceContract.CourseEntry.TABLE_NAME, null, studentCourseValues);
-                sMarks.add(sCourse.getMark());
+
+            for (Student s : students) {
+                Log.d(TAG, "saveStudent" + i++);
+                ContentValues studentValues = new ContentValues();
+                studentValues.put(StudentsPersistenceContract.StudentEntry._ID, s.getId());
+                studentValues.put(StudentsPersistenceContract.StudentEntry.COLUMN_NAME_NAME, s.getFirstName());
+                studentValues.put(StudentsPersistenceContract.StudentEntry.COLUMN_NAME_LASTNAME, s.getLastName());
+                studentValues.put(StudentsPersistenceContract.StudentEntry.COLUMN_NAME_BIRTHDAY, s.getBirthday());
+                db.insert(StudentsPersistenceContract.StudentEntry.TABLE_NAME, null, studentValues);
+                //Log.d(TAG, "new student: "+s);
+                for (Course sCourse : s.getCourses()) {
+                    //  Log.d(TAG, "new studentCourse: "+sCourse);
+                    ContentValues studentCourseValues = new ContentValues();
+                    studentCourseValues.put(StudentsPersistenceContract.CourseEntry.COLUMN_NAME_COURSE_NAME, sCourse.getName());
+                    studentCourseValues.put(StudentsPersistenceContract.CourseEntry.COLUMN_NAME_STUDENT_ID, s.getId());
+                    studentCourseValues.put(StudentsPersistenceContract.CourseEntry.COLUMN_NAME_MARK, sCourse.getMark());
+                    db.insert(StudentsPersistenceContract.CourseEntry.TABLE_NAME, null, studentCourseValues);
+                }
+
             }
-            int sum=0;
-            for(Integer mark : sMarks){
-                sum+=mark;
-            }
-            studentValues.put(StudentsPersistenceContract.StudentEntry.COLUMN_NAME_AVG_MARK, sum/sMarks.size());
-            db.insert(StudentsPersistenceContract.StudentEntry.TABLE_NAME, null, studentValues);
-            Log.d(TAG, "new student: "+s);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            Log.e(TAG, "saveStudents: ",e );
+
+        }finally {
+            db.endTransaction();
         }
     }
 

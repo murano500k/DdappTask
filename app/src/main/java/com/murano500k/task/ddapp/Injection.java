@@ -21,8 +21,6 @@ import android.support.annotation.NonNull;
 
 import com.murano500k.task.ddapp.data.StudentsDataSource;
 import com.murano500k.task.ddapp.data.StudentsRepository;
-import com.murano500k.task.ddapp.util.schedulers.BaseSchedulerProvider;
-import com.murano500k.task.ddapp.util.schedulers.SchedulerProvider;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,9 +33,5 @@ public class Injection {
     public static StudentsRepository provideTasksRepository(@NonNull Context context) {
         checkNotNull(context);
         return StudentsRepository.getInstance(context);
-    }
-
-    public static BaseSchedulerProvider provideSchedulerProvider() {
-        return SchedulerProvider.getInstance();
     }
 }

@@ -28,12 +28,11 @@ import java.util.Objects;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static android.content.ContentValues.TAG;
-
 public class StudentsPresenter implements StudentsContract.Presenter{
-
+    private static final String TAG = "StudentsPresenter";
     private StudentsDataSource dataSource;
     private StudentsContract.View mView;
     private Course mFilter = null;
@@ -51,22 +50,10 @@ public class StudentsPresenter implements StudentsContract.Presenter{
         dataSource.getAllCourses()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
-                .subscribe(new Observer<List<Course>>() {
+                .subscribe(new Consumer<List<Course>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                    }
-                    @Override
-                    public void onNext(List<Course> list) {
-                        mView.showFilterButton(list, selectedFilter);
-                    }
-                    @Override
-                    public void onError(Throwable e) {
-                        mView.showError(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: finished with courses");
+                    public void accept(List<Course> courses) throws Exception {
+                        mView.showFilterButton(courses, selectedFilter);
                     }
                 });
     }
@@ -94,6 +81,9 @@ public class StudentsPresenter implements StudentsContract.Presenter{
         }
 
     }
+
+    // TODO: 2/17/17 fix endlessScroll
+    // TODO: 2/17/17 add edittext to filterdialog
     private void processAction(Course filter, int offset, boolean update){
         dataSource.getStudents(filter, offset)
                 .subscribeOn(AndroidSchedulers.mainThread())
