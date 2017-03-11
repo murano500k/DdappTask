@@ -21,7 +21,7 @@ public class Student {
     private String lastName;
     @SerializedName("birthday")
     @Expose
-    private int birthday;
+    private long birthday;
     @SerializedName("courses")
     @Expose
     private List<Course> courses = null;
@@ -60,11 +60,11 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public int getBirthday() {
+    public long getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(int birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 

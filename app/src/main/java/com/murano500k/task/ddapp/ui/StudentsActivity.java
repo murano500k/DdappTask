@@ -79,6 +79,7 @@ public class StudentsActivity extends AppCompatActivity
         recyclerView.setAdapter(adapter);
 
         new StudentsPresenter(Injection.provideTasksRepository(getApplicationContext()),this);
+
     }
 
 
