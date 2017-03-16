@@ -1,4 +1,4 @@
-package com.murano500k.task.ddapp.cp;
+package com.stc.studentdb.demo.cp;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -8,8 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.murano500k.task.ddapp.data.local.StudentDbHelper;
-import com.murano500k.task.ddapp.data.local.StudentsPersistenceContract;
+import com.stc.studentdb.demo.data.local.StudentDbHelper;
+import com.stc.studentdb.demo.data.local.StudentsPersistenceContract;
 
 /**
  * Created by artem on 3/1/17.

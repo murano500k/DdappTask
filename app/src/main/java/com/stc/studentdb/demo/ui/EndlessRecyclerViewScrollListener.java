@@ -1,4 +1,4 @@
-package com.murano500k.task.ddapp.ui;
+package com.stc.studentdb.demo.ui;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;

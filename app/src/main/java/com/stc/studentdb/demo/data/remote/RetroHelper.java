@@ -1,4 +1,4 @@
-package com.murano500k.task.ddapp.data.remote;
+package com.stc.studentdb.demo.data.remote;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,19 +15,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetroHelper {
     private static final String API_BASE_URL="https://ddapp-sfa-api-dev.azurewebsites.net/api/test/";
 
-    public List<com.murano500k.task.ddapp.data.json.Student> getStudents() throws IOException {
+    public List<com.stc.studentdb.demo.data.json.Student> getStudents() throws IOException {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_BASE_URL)
                 .client(new OkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiService apiService = retrofit.create(ApiService.class);
-        retrofit2.Call<List<com.murano500k.task.ddapp.data.json.Student>> call=apiService.getStudentArray();
+        retrofit2.Call<List<com.stc.studentdb.demo.data.json.Student>> call=apiService.getStudentArray();
         if(call==null) return null;
 
-        Response<List<com.murano500k.task.ddapp.data.json.Student>> response=call.execute();
+        Response<List<com.stc.studentdb.demo.data.json.Student>> response=call.execute();
         if(response!=null && response.isSuccessful()){
-            List<com.murano500k.task.ddapp.data.json.Student>students =response.body();
+            List<com.stc.studentdb.demo.data.json.Student>students =response.body();
             return students;
 
         }

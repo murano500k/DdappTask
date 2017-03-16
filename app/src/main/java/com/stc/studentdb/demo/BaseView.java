@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp;
+package com.stc.studentdb.demo;
 
-public interface BasePresenter {
+public interface BaseView<T> {
 
-    void subscribe();
-
-    void unsubscribe();
+    void setPresenter(T presenter);
 
 }

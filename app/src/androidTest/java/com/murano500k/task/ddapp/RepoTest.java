@@ -8,10 +8,10 @@ import android.support.test.espresso.IdlingResource;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.murano500k.task.ddapp.data.StudentsRepository;
-import com.murano500k.task.ddapp.data.json.Course;
-import com.murano500k.task.ddapp.data.json.Student;
-import com.murano500k.task.ddapp.util.EspressoIdlingResource;
+import com.stc.studentdb.demo.data.StudentsRepository;
+import com.stc.studentdb.demo.data.json.Course;
+import com.stc.studentdb.demo.data.json.Student;
+import com.stc.studentdb.demo.util.EspressoIdlingResource;
 
 import org.junit.Before;
 import org.junit.Test;

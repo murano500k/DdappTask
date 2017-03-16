@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.data;
+package com.stc.studentdb.demo.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,11 +23,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.murano500k.task.ddapp.data.json.Course;
-import com.murano500k.task.ddapp.data.json.Student;
-import com.murano500k.task.ddapp.data.local.StudentDbHelper;
-import com.murano500k.task.ddapp.data.local.StudentsPersistenceContract;
-import com.murano500k.task.ddapp.data.remote.RetroHelper;
+import com.stc.studentdb.demo.data.json.Course;
+import com.stc.studentdb.demo.data.json.Student;
+import com.stc.studentdb.demo.data.local.StudentDbHelper;
+import com.stc.studentdb.demo.data.local.StudentsPersistenceContract;
+import com.stc.studentdb.demo.data.remote.RetroHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 
-import static com.murano500k.task.ddapp.ui.StudentsActivity.LIMIT;
+import static com.stc.studentdb.demo.ui.StudentsActivity.LIMIT;
 
 /**
  * Concrete implementation to load tasks from the data sources into a cache.

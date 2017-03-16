@@ -1,6 +1,6 @@
-package com.murano500k.task.ddapp.data.remote;
+package com.stc.studentdb.demo.data.remote;
 
-import com.murano500k.task.ddapp.data.json.Student;
+import com.stc.studentdb.demo.data.json.Student;
 
 import java.util.List;
 

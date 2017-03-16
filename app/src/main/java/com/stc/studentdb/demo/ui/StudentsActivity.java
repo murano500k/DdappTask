@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.ui;
+package com.stc.studentdb.demo.ui;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -32,10 +32,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.murano500k.task.ddapp.Injection;
-import com.murano500k.task.ddapp.R;
-import com.murano500k.task.ddapp.data.json.Course;
-import com.murano500k.task.ddapp.data.json.Student;
+import com.stc.studentdb.demo.Injection;
+import com.stc.studentdb.demo.R;
+import com.stc.studentdb.demo.data.json.Course;
+import com.stc.studentdb.demo.data.json.Student;
 
 import java.util.List;
 import java.util.Objects;

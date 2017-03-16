@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp;
+package com.stc.studentdb.demo.data;
 
-public interface BaseView<T> {
 
-    void setPresenter(T presenter);
+import com.stc.studentdb.demo.data.json.Course;
+import com.stc.studentdb.demo.data.json.Student;
 
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
+
+
+public interface StudentsDataSource {
+
+    Observable<List<Student>> getStudents(Course filter, int offset);
+    Single<List<Course>> getAllCourses();
 }

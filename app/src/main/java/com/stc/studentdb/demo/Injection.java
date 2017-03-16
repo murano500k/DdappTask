@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp;
+package com.stc.studentdb.demo;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.murano500k.task.ddapp.data.StudentsDataSource;
-import com.murano500k.task.ddapp.data.StudentsRepository;
+import com.stc.studentdb.demo.data.StudentsDataSource;
+import com.stc.studentdb.demo.data.StudentsRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

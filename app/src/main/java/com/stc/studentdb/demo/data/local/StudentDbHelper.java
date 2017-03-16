@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.data.local;
+package com.stc.studentdb.demo.data.local;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.util;
+package com.stc.studentdb.demo.util;
 
 import android.support.test.espresso.IdlingResource;
 

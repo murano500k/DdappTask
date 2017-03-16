@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.murano500k.task.ddapp.ui;
+package com.stc.studentdb.demo.ui;
 
-import com.murano500k.task.ddapp.BasePresenter;
-import com.murano500k.task.ddapp.BaseView;
-import com.murano500k.task.ddapp.data.json.Course;
-import com.murano500k.task.ddapp.data.json.Student;
+import com.stc.studentdb.demo.BasePresenter;
+import com.stc.studentdb.demo.BaseView;
+import com.stc.studentdb.demo.data.json.Course;
+import com.stc.studentdb.demo.data.json.Student;
 
 import java.util.List;
 

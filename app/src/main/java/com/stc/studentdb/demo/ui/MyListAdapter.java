@@ -1,4 +1,4 @@
-package com.murano500k.task.ddapp.ui;
+package com.stc.studentdb.demo.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.murano500k.task.ddapp.R;
-import com.murano500k.task.ddapp.data.json.Student;
+import com.stc.studentdb.demo.R;
+import com.stc.studentdb.demo.data.json.Student;
 
 import java.util.ArrayList;
 import java.util.Date;

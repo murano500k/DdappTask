@@ -1,5 +1,5 @@
 
-package com.murano500k.task.ddapp.data.json;
+package com.stc.studentdb.demo.data.json;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
